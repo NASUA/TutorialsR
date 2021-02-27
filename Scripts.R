@@ -1,107 +1,3 @@
-
-
-######
-# Manipulacion y arreglo de datos (START)
-######
-
-dada <- c(1,2,3,4,5)
-# remover datos del environment 
-rm(list = ls())
-
-# crear objectos
-data <- mean(x = c(1,2,3,4,5))
-# crear dataframes
-myDF <- data.frame("a" = c(1:10),
-                   "b" = c(21:30))
-
-# examinar dataframe 
-head(myDF, 5)
-tail(myDF, 2)
-# cambiar nombres de variables
-names(myDF) <- c("c", "d")
-# atributos del data.frame
-attributes(myDF)
-# dimensiones del dataframe
-dim(myDF) # filas, columnas
-dim(myDF)[2]
-
-nrow(myDF) # filas
-ncol(myDF) # columnas 
-
-
-summary(myDF)# resumen estadistica simple
-str(myDF) # estructura de datos
-
-length(unique(myDF$d)) # cuantos unicos? 
-
-apply(apply(myDF, 2, unique), 2, length) # cuantos unicos aplicado a todo el data.frame
-
-
-
-####### Data cleaning ######
-
-
-SaPhyto_7513 <- read.csv(file = "Saidenbach-Phytoplankton_1975-2013.csv", 
-                         header = T, 
-                         stringsAsFactors = F) # cargar data
-head(SaPhyto_7513) 
-dim(SaPhyto_7513)
-names(SaPhyto_7513)
-
-## check for errors 
-
-
-# hay NA's in my data? 
-table(is.na(SaPhyto_7513$Species))
-
-table(complete.cases(SaPhyto_7513))
-
-# crear un error
-SaPhyto_7513$Species[303] <- ""
-# investigar q celdas tienen error y eliminar del dataframe
-which(SaPhyto_7513$Species %in% c("", "NA","na","none"))
-SaPhyto_7513 <- SaPhyto_7513[-303,]
-
-## tengo outliers? 
-
-# datos per se
-hist((SaPhyto_7513$Biovolume..cubic.micrometers.))
-# datos transformados 
-hist(log(SaPhyto_7513$Biovolume..cubic.micrometers.))
-# applicar un treshold
-SaPhyto_7513[SaPhyto_7513$Biovolume..cubic.micrometers. > 999,]
-
-
-## By Date exploration 
-
-
-SaPhyto_7513$Sampling.date..YYYYMMDD. <- as.POSIXct(as.character(SaPhyto_7513$Sampling.date..YYYYMMDD.), 
-                                                    "%Y%m%d", tz = "CET")
-
-
-
-range(SaPhyto_7513$Sampling.date..YYYYMMDD.)
-
-newVar <- stringr::str_split(SaPhyto_7513$Sampling.date..YYYYMMDD., pattern = "-", simplify = T)
-
-newVar <- apply(newVar,2, as.numeric)
-colnames(newVar) <- c("Year", "Month", "Day")
-
-SaPhyto_7513Sa <- cbind(SaPhyto_7513, data.frame(newVar))
-
-ObsYear <- aggregate(SaPhyto_7513Sa$Biovolume..cubic.micrometers., 
-                     by = list(SaPhyto_7513Sa$Year),
-                     length)
-
-ObsYear <- aggregate(SaPhyto_7513Sa$Biovolume..cubic.micrometers., 
-                     by = list(SaPhyto_7513Sa$Year),
-                     length)
-
-sd(ObsYear$x)
-
-
-
-
 #### Feb 20
 
 # Review 
@@ -182,7 +78,7 @@ if((2+2) == 4){
   
 }
 
-  
+
 
 a <- c(1:10,30:40)
 
@@ -236,6 +132,417 @@ lapply(1:length(b), function(x) data.frame(b[x]/sum(b), c))
 ## while 
 
 ### Exercise with own data 
+
+
+# data management
+# importing files
+# exploring data 
+## Dataset structure
+## Cell characteristics 
+# manipulating data 
+## Subsets 
+## Match and %in%  
+
+
+#########
+# Sat. Feb 27. 
+#############
+
+
+## Functions 
+
+
+MyFunction <- function(a = 1,b = 2,c = 3){
+  d <- a +b+c
+  return(d)
+}
+
+
+MyFunction2 <- function(a,b,c){
+  d <- a +b+c
+  return(d)
+}
+
+
+## Aplicar una funcion 
+
+MyFunction <- function(a = 1,b = 2,c = 3){
+  d <- a +b+c
+  return(d)
+}
+MyFunction2 <- function(a,b,c){
+  d <- a +b+c
+  return(d)
+}
+MyFunction()
+MyFunction(2,3,4)
+MyFunction(a = 2,b = 3,c = 4)
+MyFunction(b = 2,a = 3,c = 4)
+MyFunction <- function(a = 1,b = 2,c = 3){
+  d <- a +b+c # primero suma
+  d <- d*c # sobrescribe d
+  return(d)
+}
+MyFunction(b = 2,a = 3,c = 4)
+MyFunction(a = 2,b = 3,c = 4)
+MyFunction(a = 2,c = 3,b = 4)
+MyFunction2()
+MyFunction2(1)
+MyFunction2(1,2)
+MyFunction2(1,2,3)
+MyFunction2(b = 1, c= 2, a = 3)
+MyFunction3 <- function(a = 1,b = 2,c){
+  d <- a +b+c
+  return(d)
+}
+MyFunction3(3)
+MyFunction3 <- function(a = 1,b = 2,c){
+  d <- a +b+c
+  return(d)
+}
+MyFunction3(c= 3)
+MyFunction4 <- function(a = 1,
+                        b = 2,
+                        c = T){
+  d <- a+b
+  if(c == T){
+    e <- sin(d)
+  }else{
+    f
+  }
+  return(e)
+}
+MyFunction4(45,45,T)
+sin(90)
+MyFunction4(45,45,F)
+MyFunction4 <- function(a = 1,
+                        b = 2,
+                        c = T){
+  d <- a+b
+  if(c == T){
+    e <- sin(d)
+  }else{
+    f <- d
+  }
+  return(e)
+}
+MyFunction4(45,45,T)
+MyFunction4(45,45,F)
+MyFunction4 <- function(a = 1,
+                        b = 2,
+                        c = T){
+  d <- a+b
+  if(c == T){
+    e <- sin(d)
+  }else{
+    f <- d
+  }
+  ifelse(c == T, return(e), return(f))
+}
+MyFunction4(45,45,F)
+MyFunction5 <- function(a = 1,
+                        b = 2,
+                        c = T){
+  d <- a+b
+  if(c == T){
+    e <- sin(d)
+  }else{
+    return(d)
+  }
+  return(e)
+}
+MyFunction5(45,45,F)
+MyFunction6 <- function(a = 1,
+                        b = 2,
+                        c = T){
+  d <- a+b
+  if(c == T){
+    d <- sin(d)
+  }else{
+    d
+  }
+  return(d)
+}
+MyFunction6(45,45,F)
+MyFunction6 <- function(a = 1,
+                        b = 2,
+                        c = T){
+  d <- a+b
+  if(c == T){
+    d <- sin(d)
+  }else{
+    d
+  }
+}
+MyFunction6(45,45,F)
+MyFunction6 <- function(a = 1,
+                        b = 2,
+                        c = T){
+  print("Sumando d")
+  d <- a+b
+  print("Done")
+  if(c == T){
+    d <- sin(d)
+  }else{
+    d
+  }
+  return(d)
+}
+
+MyFunction6(45,45,F)
+e <- MyFunction6(45,45,F)
+e
+
+MyFunction7 <- function(a = 90,
+                        c = T){
+  print("Sumando d")
+  d <- a
+  print("Done")
+  if(c == T){
+    d <- sin(d)
+  }else{
+    d
+  }
+  return(d)
+}
+MyFunction7()
+MyFunction7 <- function(a = 90,
+                        c = T){
+  print("Sumando d")
+  d <- a
+  print("Done")
+  if(c == T){
+    d <- sin(d)
+  }else{
+    d
+  }
+  plot(d~a)
+}
+
+MyFunction7()
+
+seq(1,360,1)
+
+MyFunction7(a = seq(1,360,1))
+
+MyFunction7 <- function(a = 90,
+                        c = T){
+  print("Sumando d")
+  d <- a
+  print("Done")
+  if(c == T){
+    d <- sin(d)
+  }else{
+    d
+  }
+  return(d)
+}
+
+
+
+MyFunction7(1)
+MyFunction7(0)
+
+
+plot(MyFunction7(0)~0)
+plot(MyFunction7(0)~0,
+     xlim = c(0,360),
+     ylim = c(-1,1))
+cat("\014")
+print("hello")
+cat("\014")
+
+
+plot(MyFunction7(0)~0,
+     xlim = c(0,360),
+     ylim = c(-1,1))
+
+
+
+for(i in seq(from = 1,to = 360,by = 0.1)){
+  print(i)
+  points(MyFunction7(i)~i,
+         col = "red")
+  cat("\014")
+}
+
+
+
+#############
+
+sin(1)
+
+
+
+par(mfrow = c(2,3), mar = c(2,2,2,2), oma = c(2,2,2,2))
+
+for(i in 1:6){
+  a <- sin(seq(1,360,0.1)*i)
+  
+  plot(a,
+       type = "l",
+       col = "red",
+       main = paste("i being equal to: ", i),
+       xlim = c(1,360), 
+       ylim = c(-1,1),
+       frame = F)
+  
+  
+}
+
+
+
+
+
+par(mfrow = c(2,3), mar = c(5,5,5,5), oma = c(2,2,2,2))
+
+for(i in 1:6){
+  a <- sin(seq(1,360,0.1)*i)
+  
+  plot(a,
+       type = "l",
+       col = "red",
+       main = paste("i being equal to: ", i),
+       xlim = c(1,360), 
+       ylim = c(-1,1),
+       frame = F)
+  
+  
+}
+
+
+par(mfrow = c(2,3), mar = c(2,2,2,2))
+
+for(i in 1:6){
+  a <- sin(seq(1,360,0.1)*i)
+  
+  plot(a,
+       type = "l",
+       col = "red",
+       main = paste("i being equal to: ", i),
+       xlim = c(1,360), 
+       ylim = c(-1,1),
+       frame = F)
+  
+  
+}
+
+
+dev.off() # borra los parametros
+
+layout(matrix(c(1,2,3,5,4,6,6,6,6,6,6,6),2,4))
+
+layout.show()
+
+## Exploracion de datos y fundamentos de estadistica descriptiva
+
+####
+
+## load data
+SaPhyto_7513 <- read.csv(file = "Saidenbach-Phytoplankton_1975-2013.csv", 
+                         header = T, 
+                         stringsAsFactors = F)
+
+SaPhyto_7513$Sampling.date..YYYYMMDD. <- as.POSIXct(as.character(SaPhyto_7513$Sampling.date..YYYYMMDD.), 
+                                                    "%Y%m%d", tz = "CET")
+
+
+head(SaPhyto_7513)
+dim(SaPhyto_7513)
+names(SaPhyto_7513)
+
+
+plot(SaPhyto_7513$Biovolume..cubic.micrometers.~SaPhyto_7513$Sampling.date..YYYYMMDD.,
+     pch = "+")
+
+
+SaPhyto_7513$Sampling.depth..cm.below.surface. <- as.factor(SaPhyto_7513$Sampling.depth..cm.below.surface.)
+str(SaPhyto_7513)
+
+## muestra aleatoria de los datos 
+SaPhyto_7513b <- SaPhyto_7513[sample(x = 1:length(SaPhyto_7513$Sampling.date..YYYYMMDD.), 
+                                    size = 3000),]
+# revisar q la muestra fue correcta
+length(SaPhyto_7513b$Sampling.date..YYYYMMDD.) == 3000
+
+
+# usar muestra para plot
+
+hist(log(SaPhyto_7513b$Biovolume..cubic.micrometers))
+boxplot(SaPhyto_7513b$Biovolume..cubic.micrometers.~SaPhyto_7513b$Sampling.depth..cm.below.surface.,
+        log = "y")
+
+par(las = 2)
+
+boxplot(log(SaPhyto_7513b$Biovolume..cubic.micrometers.)~SaPhyto_7513b$Sampling.depth..cm.below.surface., 
+        frame = F)
+abline(h=12)
+
+
+SaPhyto_7513b[log(SaPhyto_7513b$Biovolume..cubic.micrometers.)>12, ]
+
+
+
+
+
+pch <- ifelse(SaPhyto_7513b$Biovolume..cubic.micrometers. <1000, 1,
+                 ifelse(SaPhyto_7513b$Biovolume..cubic.micrometers. < 2000, 2, 
+                        ifelse(SaPhyto_7513b$Biovolume..cubic.micrometers. < 3000, 3,4)))
+
+
+colors <- ifelse(SaPhyto_7513b$Biovolume..cubic.micrometers. <1000, '#66c2a5',
+              ifelse(SaPhyto_7513b$Biovolume..cubic.micrometers. < 2000, '#fc8d62', 
+                     ifelse(SaPhyto_7513b$Biovolume..cubic.micrometers. < 3000, '#8da0cb','#e78ac3')))
+
+
+
+plot(log(SaPhyto_7513b$Biovolume..cubic.micrometers.)~SaPhyto_7513b$Sampling.date..YYYYMMDD. ,
+     frame = F,
+     cex = 0.4,
+     pch = pch, 
+     col = colors)
+
+######
+
+## 
+SaPhyto_7513b$taxa <- sample(1:6,length(SaPhyto_7513b$Species), replace = T)
+
+boxplot(log(SaPhyto_7513b$Biovolume..cubic.micrometers.)~SaPhyto_7513b$taxa)
+
+####
+
+
+### Function to calculate the sum of xx
+# 
+
+source("Functions.R")
+
+par(mfrow = c(1,2))
+
+mean <- Fun2Sum(datos = SaPhyto_7513b,
+                name = "Biovolume..cubic.micrometers.operacion",
+                operacion = "mean")
+sd <- Fun2Sum(datos = SaPhyto_7513b, operacion = "sd")
+
+
+
+######
+
+
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
