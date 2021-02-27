@@ -484,12 +484,12 @@ SaPhyto_7513b[log(SaPhyto_7513b$Biovolume..cubic.micrometers.)>12, ]
 
 
 
-
+## crear un vector de symbolos
 pch <- ifelse(SaPhyto_7513b$Biovolume..cubic.micrometers. <1000, 1,
                  ifelse(SaPhyto_7513b$Biovolume..cubic.micrometers. < 2000, 2, 
                         ifelse(SaPhyto_7513b$Biovolume..cubic.micrometers. < 3000, 3,4)))
 
-
+## crear un vector de colores 
 colors <- ifelse(SaPhyto_7513b$Biovolume..cubic.micrometers. <1000, '#66c2a5',
               ifelse(SaPhyto_7513b$Biovolume..cubic.micrometers. < 2000, '#fc8d62', 
                      ifelse(SaPhyto_7513b$Biovolume..cubic.micrometers. < 3000, '#8da0cb','#e78ac3')))
@@ -510,20 +510,17 @@ SaPhyto_7513b$taxa <- sample(1:6,length(SaPhyto_7513b$Species), replace = T)
 boxplot(log(SaPhyto_7513b$Biovolume..cubic.micrometers.)~SaPhyto_7513b$taxa)
 
 ####
-
-
-### Function to calculate the sum of xx
-# 
-
+# load custom functions from wd. 
 source("Functions.R")
 
+## utilize the function we just created 
+       
 par(mfrow = c(1,2))
 
 mean <- Fun2Sum(datos = SaPhyto_7513b,
                 name = "Biovolume..cubic.micrometers.operacion",
                 operacion = "mean")
 sd <- Fun2Sum(datos = SaPhyto_7513b, operacion = "sd")
-
 
 
 ######
